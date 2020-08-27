@@ -1,5 +1,6 @@
 package com.waschbar.engine;
 
+import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 
@@ -87,6 +88,7 @@ public class GameContainer implements Runnable
                 renderer.clear();
                 //Render game
                 game.render(this, renderer);
+                renderer.drawText("FPS: " + fps, 0, 0, Color.cyan.getRGB());
                 window.update();
                 frames++;
             }
