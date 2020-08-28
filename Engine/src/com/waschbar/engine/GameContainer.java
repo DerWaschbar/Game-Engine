@@ -13,7 +13,7 @@ public class GameContainer implements Runnable
     private AbstractGame game;
 
     private boolean running = false;
-    private final double UPDATE_CAP = 1.0/60.0;
+    private final double UPDATE_CAP = 1.0/1000.0;
 
     private int width = 320, height = 240;
     private float scale = 3f;
@@ -61,6 +61,7 @@ public class GameContainer implements Runnable
             firstTime = System.nanoTime() / 1000000000.0;
             passedTime = firstTime - lastTime;
             lastTime = firstTime;
+
             unprocessedTime += passedTime;
             frameTime += passedTime;
 
@@ -86,8 +87,8 @@ public class GameContainer implements Runnable
             if(render)
             {
                 renderer.clear();
-                //Render game
                 game.render(this, renderer);
+                renderer.process();
                 renderer.drawText("FPS: " + fps, 0, 0, Color.cyan.getRGB());
                 window.update();
                 frames++;
