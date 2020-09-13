@@ -176,12 +176,11 @@ public class Renderer
     public void drawText(String text, int offX, int offY, int color)
     {
         Image fontImg = font.getFontImage();
-        text = text.toUpperCase();
         int offset = 0;
 
         for(int i = 0; i < text.length(); i++)
         {
-            int unicode = text.codePointAt(i) - 32;
+            int unicode = text.codePointAt(i);
 
             for(int x = 0; x < font.getWidths()[unicode]; x++)
                 for(int y = 0; y < fontImg.getHeight(); y++)
