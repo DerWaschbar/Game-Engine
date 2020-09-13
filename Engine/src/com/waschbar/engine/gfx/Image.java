@@ -11,6 +11,8 @@ public class Image
     private boolean alpha = false;
     private int zDepth;
 
+    private int lightBlock = Light.NONE;
+
     public Image(String path)
     {
         BufferedImage image = null;
@@ -73,5 +75,13 @@ public class Image
 
     public void setP(int[] p) {
         this.p = p;
+    }
+
+    public int getLightBlock() {
+        return lightBlock;
+    }
+
+    public void setLightBlock(int lightBlock) {
+        this.lightBlock = lightBlock;
     }
 }

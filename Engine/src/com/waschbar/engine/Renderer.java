@@ -1,14 +1,11 @@
 package com.waschbar.engine;
 
-import com.waschbar.engine.gfx.Image;
-import com.waschbar.engine.gfx.ImageRequest;
-import com.waschbar.engine.gfx.ImageTile;
+import com.waschbar.engine.gfx.*;
 import com.waschbar.engine.gfx.Font;
+import com.waschbar.engine.gfx.Image;
 
-import java.awt.*;
 import java.awt.image.DataBufferInt;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 
@@ -21,10 +18,11 @@ public class Renderer
     private int[] lightBlock;
 
     private int zDepth = 0;
-    private int ambientColor = 0xff6b6b6b;
+    private int ambientColor = 0xff232323;
 
     private boolean processing = false;
-    private ArrayList<ImageRequest> requests = new ArrayList<ImageRequest>();
+    private ArrayList<ImageRequest> imageRequests = new ArrayList<ImageRequest>();
+    private ArrayList<LightRequest> lightRequests = new ArrayList<LightRequest>();
     private Font font = Font.STANDARD;
 
     public Renderer(GameContainer gc)
@@ -52,7 +50,7 @@ public class Renderer
     {
         processing = true;
 
-        Collections.sort(requests, new Comparator<ImageRequest>() {
+        Collections.sort(imageRequests, new Comparator<ImageRequest>() {
             @Override
             public int compare(ImageRequest o1, ImageRequest o2) {
                 if(o1.zDepth < o2.zDepth)
@@ -63,10 +61,15 @@ public class Renderer
             }
         });
 
-        for(ImageRequest ir : requests)
+        for(ImageRequest ir : imageRequests)
         {
             setzDepth(ir.zDepth);
             drawImage(ir.image, ir.offX, ir.offY);
+        }
+
+        for (int i = 0; i < lightRequests.size(); i++) {
+            LightRequest lightRequest = lightRequests.get(i);
+            drawLightRequest(lightRequest.light, lightRequest.locX, lightRequest.locY);
         }
 
         // Merge light and pixel maps
@@ -79,7 +82,8 @@ public class Renderer
             p[i] = (((int)(((p[i] >> 16) & 0xff) * r) << 16) | ((int)(((p[i] >> 8) & 0xff) * g) << 8) | (int)(((p[i]) & 0xff) * b));
         }
 
-        requests.clear();
+        imageRequests.clear();
+        lightRequests.clear();
         processing = false;
     }
 
@@ -127,11 +131,21 @@ public class Renderer
         lightMap[index] = (maxRed << 16 | maxGreen << 8 | maxBlue);
     }
 
+    public void setLightBlock(int x, int y, int value)
+    {
+        if((x < 0 || x >= pW || y < 0 || y > pH))
+            return;
+
+        if(zBuffer[x + y * pW] > zDepth)
+            return;
+
+        lightBlock[x + y * pW] = value;
+    }
+
     public void drawImage(Image image, int offsetX, int offsetY)
     {
-        if(image.isAlpha() && !processing)
-        {
-            requests.add(new ImageRequest(image, zDepth, offsetX, offsetY));
+        if(image.isAlpha() && !processing) {
+            imageRequests.add(new ImageRequest(image, zDepth, offsetX, offsetY));
             return;
         }
 
@@ -139,6 +153,7 @@ public class Renderer
             for(int y = Math.max(offsetY, 0); y < Math.min(image.getHeight()+offsetY, pH); y++)
             {
                 setPixel(x, y, image.getP()[(x-offsetX) + (y-offsetY) * image.getWidth()]);
+                setLightBlock(x, y, image.getLightBlock());
             }
     }
 
@@ -146,7 +161,7 @@ public class Renderer
     {
         if(image.isAlpha() && !processing)
         {
-            requests.add(new ImageRequest(image.getTileImage(tileX, tileY), zDepth, offsetX, offsetY));
+            imageRequests.add(new ImageRequest(image.getTileImage(tileX, tileY), zDepth, offsetX, offsetY));
             return;
         }
 
@@ -154,6 +169,7 @@ public class Renderer
             for(int y = Math.max(offsetY, 0); y < Math.min(image.getTileHeight()+offsetY, pH); y++)
             {
                 setPixel(x, y, image.getP()[(x-offsetX+tileX*image.getTileWidth()) + (y-offsetY+tileY*image.getTileHeight()) * image.getWidth()]);
+                setLightBlock(x, y, image.getLightBlock());
             }
     }
 
@@ -201,7 +217,65 @@ public class Renderer
     {
         for(int x = 0; x <= width; x++)
             for(int y = 0; y <= height; y++)
-                setPixel(x+offX, y+offY, color);
+                setPixel(x + offX, y + offY, color);
+    }
+
+    public void drawLight(Light light, int offX, int offY) {
+        lightRequests.add(new LightRequest(light, offX, offY));
+    }
+
+    private void drawLightRequest(Light light, int offX, int offY) {
+        for (int i = 0; i <= light.getRadius() * 2; i++) {
+            drawLightLine(light, light.getRadius(), light.getRadius(), i, 0, offX, offY);
+            drawLightLine(light, light.getRadius(), light.getRadius(), i, light.getRadius() * 2, offX, offY);
+            drawLightLine(light, light.getRadius(), light.getRadius(), 0, i, offX, offY);
+            drawLightLine(light, light.getRadius(), light.getRadius(), light.getRadius() * 2, i, offX, offY);
+        }
+    }
+
+    public void drawLightLine(Light light, int x0, int y0, int x1, int y1, int offX, int offY) {
+        int dx = Math.abs(x0 - x1);
+        int dy = Math.abs(y0 - y1);
+        int sx = -1;
+        int sy = -1;
+        if (x0 < x1)
+            sx = 1;
+        if (y0 < y1)
+            sy = 1;
+
+        int error = dx - dy;
+        int error2;
+
+        while(true) {
+
+            int screenX = x0 - light.getRadius() + offX;
+            int screenY = y0 - light.getRadius() + offY;
+
+            if (screenX < 0 || screenY < 0 || screenX >= pW || screenY >= pH)
+                return;
+
+            int lightColor = light.getLightValue(x0, y0);
+            if (lightColor == 0)
+                return;
+
+            if (lightBlock[screenX + screenY * pW] == Light.FULL)
+                return;
+
+            setLightMap(screenX, screenY, lightColor);
+
+            if (x0 == x1 && y0 == y1)
+                break;
+
+            error2 = error * 2;
+            if (error2 > -dy) {
+                error -= dy;
+                x0 += sx;
+            }
+            if (error2 < dx) {
+                error += dx;
+                y0 += sy;
+            }
+        }
     }
 
     public int getzDepth()
