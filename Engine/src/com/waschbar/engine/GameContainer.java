@@ -54,6 +54,8 @@ public class GameContainer implements Runnable
         int frames = 0;
         int fps = 0;
 
+        game.init(this);
+
         while(running)
         {
             render = false;
@@ -107,6 +109,10 @@ public class GameContainer implements Runnable
     public void dispose()
     {
 
+    }
+
+    public Renderer getRenderer() {
+        return renderer;
     }
 
     public int getWidth() {

@@ -18,7 +18,7 @@ public class Renderer
     private int[] lightBlock;
 
     private int zDepth = 0;
-    private int ambientColor = 0xff232323;
+    private int ambientColor = -1;
 
     private boolean processing = false;
     private ArrayList<ImageRequest> imageRequests = new ArrayList<ImageRequest>();
@@ -90,7 +90,7 @@ public class Renderer
     public void setPixel(int x, int y, int value)
     {
         int alpha = ((value >> 24) & 0xff);
-        if((x < 0 || x >= pW || y < 0 || y > pH) || alpha == 0)
+        if((x < 0 || x >= pW || y < 0 || y >= pH) || alpha == 0)
             return;
 
         int index = x + y * pW;
@@ -275,6 +275,14 @@ public class Renderer
                 y0 += sy;
             }
         }
+    }
+
+    public int getAmbientColor() {
+        return ambientColor;
+    }
+
+    public void setAmbientColor(int ambientColor) {
+        this.ambientColor = ambientColor;
     }
 
     public int getzDepth()
