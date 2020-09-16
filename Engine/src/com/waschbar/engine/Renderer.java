@@ -21,8 +21,8 @@ public class Renderer
     private int ambientColor = -1;
 
     private boolean processing = false;
-    private ArrayList<ImageRequest> imageRequests = new ArrayList<ImageRequest>();
-    private ArrayList<LightRequest> lightRequests = new ArrayList<LightRequest>();
+    private ArrayList<ImageRequest> imageReques16 = new ArrayList<ImageRequest>();
+    private ArrayList<LightRequest> lightReques16 = new ArrayList<LightRequest>();
     private Font font = Font.STANDARD;
 
     public Renderer(GameContainer gc)
@@ -50,7 +50,7 @@ public class Renderer
     {
         processing = true;
 
-        Collections.sort(imageRequests, new Comparator<ImageRequest>() {
+        Collections.sort(imageReques16, new Comparator<ImageRequest>() {
             @Override
             public int compare(ImageRequest o1, ImageRequest o2) {
                 if(o1.zDepth < o2.zDepth)
@@ -61,14 +61,14 @@ public class Renderer
             }
         });
 
-        for(ImageRequest ir : imageRequests)
+        for(ImageRequest ir : imageReques16)
         {
             setzDepth(ir.zDepth);
             drawImage(ir.image, ir.offX, ir.offY);
         }
 
-        for (int i = 0; i < lightRequests.size(); i++) {
-            LightRequest lightRequest = lightRequests.get(i);
+        for (int i = 0; i < lightReques16.size(); i++) {
+            LightRequest lightRequest = lightReques16.get(i);
             drawLightRequest(lightRequest.light, lightRequest.locX, lightRequest.locY);
         }
 
@@ -82,8 +82,8 @@ public class Renderer
             p[i] = (((int)(((p[i] >> 16) & 0xff) * r) << 16) | ((int)(((p[i] >> 8) & 0xff) * g) << 8) | (int)(((p[i]) & 0xff) * b));
         }
 
-        imageRequests.clear();
-        lightRequests.clear();
+        imageReques16.clear();
+        lightReques16.clear();
         processing = false;
     }
 
@@ -145,7 +145,7 @@ public class Renderer
     public void drawImage(Image image, int offsetX, int offsetY)
     {
         if(image.isAlpha() && !processing) {
-            imageRequests.add(new ImageRequest(image, zDepth, offsetX, offsetY));
+            imageReques16.add(new ImageRequest(image, zDepth, offsetX, offsetY));
             return;
         }
 
@@ -161,7 +161,7 @@ public class Renderer
     {
         if(image.isAlpha() && !processing)
         {
-            imageRequests.add(new ImageRequest(image.getTileImage(tileX, tileY), zDepth, offsetX, offsetY));
+            imageReques16.add(new ImageRequest(image.getTileImage(tileX, tileY), zDepth, offsetX, offsetY));
             return;
         }
 
@@ -220,7 +220,7 @@ public class Renderer
     }
 
     public void drawLight(Light light, int offX, int offY) {
-        lightRequests.add(new LightRequest(light, offX, offY));
+        lightReques16.add(new LightRequest(light, offX, offY));
     }
 
     private void drawLightRequest(Light light, int offX, int offY) {

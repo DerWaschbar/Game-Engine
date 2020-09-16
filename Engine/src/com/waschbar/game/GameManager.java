@@ -14,13 +14,15 @@ import java.util.ArrayList;
 
 public class GameManager extends AbstractGame
 {
-    private int[] collision;
+    public static final int TS = 16;
+
+    private boolean[] collision;
     private int levelW, levelH;
     private ArrayList<GameObject> objects = new ArrayList<GameObject>();
 
     public GameManager()
     {
-        objects.add(new Player(2,2));
+        objects.add(new Player(6,4));
         loadLevel("/level.png");
     }
 
@@ -34,7 +36,7 @@ public class GameManager extends AbstractGame
     {
         for(int i = 0; i < objects.size(); i++)
         {
-            objects.get(i).update(gc, dt);
+            objects.get(i).update(gc,this, dt);
             if(objects.get(i).isDead())
             {
                 objects.remove(i);
@@ -49,10 +51,10 @@ public class GameManager extends AbstractGame
         for(int x = 0; x < levelW; x++)
             for(int y = 0; y < levelH; y++)
             {
-                if(collision[x + y * levelW] == 1)
-                    renderer.drawFillRect(x*16, y*16, 16, 16, 0xff0f0f0f);
+                if(collision[x + y * levelW])
+                    renderer.drawFillRect(x*TS, y*TS, TS, TS, 0xff0f0f0f);
                 else
-                    renderer.drawFillRect(x*16, y*16, 16, 16, 0xfff9f9f9);
+                    renderer.drawFillRect(x*TS, y*TS, TS, TS, 0xfff9f9f9);
 
             }
 
@@ -67,7 +69,7 @@ public class GameManager extends AbstractGame
         Image levelImage = new Image(path);
         levelW = levelImage.getWidth();
         levelH = levelImage.getHeight();
-        collision = new int[levelH * levelW];
+        collision = new boolean[levelH * levelW];
 
         for(int x = 0; x < levelImage.getWidth(); x++)
             for(int y = 0; y < levelImage.getHeight(); y++)
@@ -75,13 +77,19 @@ public class GameManager extends AbstractGame
                 int index = x + y * levelImage.getWidth();
                 if(levelImage.getP()[index] == 0xff000000)
                 {
-                    collision[index] = 1;
+                    collision[index] = true;
                 }
                 else
                 {
-                    collision[index] = 0;
+                    collision[index] = false;
                 }
             }
+    }
+
+    public boolean getCollision(int x, int y) {
+        if (x < 0 || x >= levelW || y < 0 || y > levelH)
+            return true;
+        return collision[x + y * levelW];
     }
 
     public static void main(String[] args)
