@@ -12,10 +12,10 @@ public class Player extends GameObject
     private int tileX, tileY;
     private float offX, offY;
 
-    private float speed = 100;
-    private float fallSpeed = 10;
-    private float jump = (float) -1.5;
-    private float fallDistance = 0;
+    private float speed = 100;          // X speed
+    private float fallSpeed = 350;       // g
+    private float jump = (float) -250.0; // Up Speed
+    private float fallDistance = 0; // Y speed
     private boolean ground = false;
 
     public Player(int posX, int posY)
@@ -72,12 +72,14 @@ public class Player extends GameObject
         //End of left and right
 
         //Jump and gravity
-        fallDistance += dt * fallSpeed;
+        fallDistance +=  dt * fallSpeed;
         if (gc.getInput().isKeyDown(KeyEvent.VK_W) && ground) {
             fallDistance = jump;
             ground = false;
         }
-        offY += fallDistance;
+
+        //System.out.println(offY + " v: " + fallDistance + " a: " + dt * fallSpeed);
+        offY += dt * fallDistance;
 
         if (fallDistance < 0) {
             if ((gm.getCollision(tileX, tileY - 1) || gm.getCollision(tileX +
