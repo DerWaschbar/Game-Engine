@@ -2,6 +2,7 @@ package com.waschbar.game;
 
 import com.waschbar.engine.GameContainer;
 import com.waschbar.engine.Renderer;
+import com.waschbar.engine.gfx.ImageTile;
 
 import java.awt.event.KeyEvent;
 
@@ -9,14 +10,18 @@ import static com.waschbar.game.GameManager.TS;
 
 public class Player extends GameObject
 {
+    private ImageTile playerImage = new ImageTile("/player.png", 16, 16);
     private int tileX, tileY;
     private float offX, offY;
+    private int direction = 0;
+    private float animation = 0;
 
     private float speed = 100;          // X speed
     private float fallSpeed = 350;       // Down Speed
     private float jump = (float) -250.0; // Up Speed
     private float fallDistance = 0; // Y speed
     private boolean ground = false;
+    private boolean groundLast = false;
 
     public Player(int posX, int posY)
     {
@@ -132,11 +137,38 @@ public class Player extends GameObject
         if (gc.getInput().isKey(KeyEvent.VK_LEFT)) {
             gm.addObject(new Bullet(tileX, tileY, offX + width / 2, offY + height / 2,3));
         }
+
+        if (gc.getInput().isKey(KeyEvent.VK_D)) {
+            direction = 0;
+            animation += dt * 8;
+            if (animation >= 4)
+                animation = 0;
+        }
+        else if (gc.getInput().isKey(KeyEvent.VK_A)) {
+            direction = 1;
+            animation += dt * 8;
+            if (animation >= 4)
+                animation = 0;
+        }
+        else {
+            animation = 0;
+        }
+
+        if (!ground) {
+            animation = 1;
+        }
+
+        if (!groundLast && ground) {
+            animation = 2;
+        }
+
+        groundLast = ground;
+
     }
 
     public void render(GameContainer gc, Renderer r)
     {
-        r.drawFillRect((int)posX, (int)posY, width, height, 0xff00ff00);
+        r.drawImageTile(playerImage, (int)posX, (int)posY, (int)animation, direction);
     }
 
 }

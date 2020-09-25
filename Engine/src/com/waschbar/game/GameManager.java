@@ -3,13 +3,8 @@ package com.waschbar.game;
 import com.waschbar.engine.AbstractGame;
 import com.waschbar.engine.GameContainer;
 import com.waschbar.engine.Renderer;
-import com.waschbar.engine.audio.SoundClip;
 import com.waschbar.engine.gfx.Image;
-import com.waschbar.engine.gfx.ImageTile;
-import com.waschbar.engine.gfx.Light;
 
-import java.awt.*;
-import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 
 public class GameManager extends AbstractGame
@@ -17,9 +12,12 @@ public class GameManager extends AbstractGame
     public static final int TS = 16;
 
     private boolean[] collision;
+
     private int levelW, levelH;
     private ArrayList<GameObject> objects = new ArrayList<GameObject>();
     private Camera camera;
+    private Image levelImage = new Image("/levelImage.png");
+    private Image skyImage = new Image("/sky.png");
 
     public GameManager()
     {
@@ -52,16 +50,8 @@ public class GameManager extends AbstractGame
     public void render(GameContainer gc, Renderer renderer)
     {
         camera.render(renderer);
-        for(int x = 0; x < levelW; x++)
-            for(int y = 0; y < levelH; y++)
-            {
-                if(collision[x + y * levelW])
-                    renderer.drawFillRect(x*TS, y*TS, TS, TS, 0xff0f0f0f);
-                else
-                    renderer.drawFillRect(x*TS, y*TS, TS, TS, 0xfff9f9f9);
-
-            }
-
+        renderer.drawImage(skyImage, 0, 0);
+        renderer.drawImage(levelImage, 0, 0);
         for(GameObject object : objects)
         {
             object.render(gc, renderer);
@@ -107,6 +97,14 @@ public class GameManager extends AbstractGame
         if (x < 0 || x >= levelW || y < 0 || y > levelH)
             return true;
         return collision[x + y * levelW];
+    }
+
+    public int getLevelW() {
+        return levelW;
+    }
+
+    public int getLevelH() {
+        return levelH;
     }
 
     public static void main(String[] args)

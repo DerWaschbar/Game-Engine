@@ -3,6 +3,8 @@ package com.waschbar.game;
 import com.waschbar.engine.GameContainer;
 import com.waschbar.engine.Renderer;
 
+import static com.waschbar.game.GameManager.TS;
+
 public class Camera {
 
     private float offX, offY;
@@ -22,11 +24,17 @@ public class Camera {
             return;
         }
 
-        float targetX = (target.getPosX() + target.getWidth() / 2) - gc.getWidth() / 2;
-        float targetY = (target.getPosY() + target.getHeight() / 2) - gc.getHeight() / 2;
+        offX = (target.getPosX() + target.getWidth() / 2) - gc.getWidth() / 2;
+        offY = (target.getPosY() + target.getHeight() / 2) - gc.getHeight() / 2;
 
-        offX -= dt * (offX - targetX) * 10;
-        offY -= dt * (offY - targetY) * 10;
+        if (offX < 0)
+            offX = 0;
+        if (offY < 0)
+            offY = 0;
+        if (offX + gc.getWidth() > gm.getLevelW() * TS)
+            offX = gm.getLevelW() * TS - gc.getWidth();
+        if (offY + gc.getHeight() > gm.getLevelH() * TS)
+            offY = gm.getLevelH() * TS - gc.getHeight();
     }
 
     public void render(Renderer r) {
