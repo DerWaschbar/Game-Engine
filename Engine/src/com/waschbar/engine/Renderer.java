@@ -11,6 +11,9 @@ import java.util.Comparator;
 
 public class Renderer
 {
+    private ArrayList<ImageRequest> imageRequests = new ArrayList<ImageRequest>();
+    private ArrayList<LightRequest> lightRequests = new ArrayList<LightRequest>();
+
     private int pW, pH; // PixelWidth, Pixel Height
     private int[] p;
     private int[] zBuffer;
@@ -21,9 +24,8 @@ public class Renderer
     private int ambientColor = -1;
 
     private boolean processing = false;
-    private ArrayList<ImageRequest> imageReques16 = new ArrayList<ImageRequest>();
-    private ArrayList<LightRequest> lightReques16 = new ArrayList<LightRequest>();
     private Font font = Font.STANDARD;
+    private int camX, camY;
 
     public Renderer(GameContainer gc)
     {
@@ -50,7 +52,7 @@ public class Renderer
     {
         processing = true;
 
-        Collections.sort(imageReques16, new Comparator<ImageRequest>() {
+        Collections.sort(imageRequests, new Comparator<ImageRequest>() {
             @Override
             public int compare(ImageRequest o1, ImageRequest o2) {
                 if(o1.zDepth < o2.zDepth)
@@ -61,14 +63,14 @@ public class Renderer
             }
         });
 
-        for(ImageRequest ir : imageReques16)
+        for(ImageRequest ir : imageRequests)
         {
             setzDepth(ir.zDepth);
             drawImage(ir.image, ir.offX, ir.offY);
         }
 
-        for (int i = 0; i < lightReques16.size(); i++) {
-            LightRequest lightRequest = lightReques16.get(i);
+        for (int i = 0; i < lightRequests.size(); i++) {
+            LightRequest lightRequest = lightRequests.get(i);
             drawLightRequest(lightRequest.light, lightRequest.locX, lightRequest.locY);
         }
 
@@ -82,14 +84,15 @@ public class Renderer
             p[i] = (((int)(((p[i] >> 16) & 0xff) * r) << 16) | ((int)(((p[i] >> 8) & 0xff) * g) << 8) | (int)(((p[i]) & 0xff) * b));
         }
 
-        imageReques16.clear();
-        lightReques16.clear();
+        imageRequests.clear();
+        lightRequests.clear();
         processing = false;
     }
 
     public void setPixel(int x, int y, int value)
     {
         int alpha = ((value >> 24) & 0xff);
+
         if((x < 0 || x >= pW || y < 0 || y >= pH) || alpha == 0)
             return;
 
@@ -144,8 +147,10 @@ public class Renderer
 
     public void drawImage(Image image, int offsetX, int offsetY)
     {
+        offsetX -= camX;
+        offsetY -= camY;
         if(image.isAlpha() && !processing) {
-            imageReques16.add(new ImageRequest(image, zDepth, offsetX, offsetY));
+            imageRequests.add(new ImageRequest(image, zDepth, offsetX, offsetY));
             return;
         }
 
@@ -159,9 +164,11 @@ public class Renderer
 
     public void drawImageTile(ImageTile image, int offsetX, int offsetY, int tileX, int tileY)
     {
+        offsetX -= camX;
+        offsetY -= camY;
         if(image.isAlpha() && !processing)
         {
-            imageReques16.add(new ImageRequest(image.getTileImage(tileX, tileY), zDepth, offsetX, offsetY));
+            imageRequests.add(new ImageRequest(image.getTileImage(tileX, tileY), zDepth, offsetX, offsetY));
             return;
         }
 
@@ -175,6 +182,8 @@ public class Renderer
 
     public void drawText(String text, int offX, int offY, int color)
     {
+        offX -= camX;
+        offY -= camY;
         Image fontImg = font.getFontImage();
         int offset = 0;
 
@@ -199,6 +208,8 @@ public class Renderer
 
     public void drawRect(int offX, int offY, int width, int height, int color)
     {
+        offX -= camX;
+        offY -= camY;
         for(int x = 0; x <= width; x++)
         {
             setPixel(x+offX, offY, color);
@@ -214,16 +225,21 @@ public class Renderer
 
     public void drawFillRect(int offX, int offY, int width, int height, int color)
     {
-        for(int x = 0; x <= width; x++)
-            for(int y = 0; y <= height; y++)
+        offX -= camX;
+        offY -= camY;
+
+        for(int x = 0; x < width; x++)
+            for(int y = 0; y < height; y++)
                 setPixel(x + offX, y + offY, color);
     }
 
     public void drawLight(Light light, int offX, int offY) {
-        lightReques16.add(new LightRequest(light, offX, offY));
+        lightRequests.add(new LightRequest(light, offX, offY));
     }
 
     private void drawLightRequest(Light light, int offX, int offY) {
+        offX -= camX;
+        offY -= camY;
         for (int i = 0; i <= light.getRadius() * 2; i++) {
             drawLightLine(light, light.getRadius(), light.getRadius(), i, 0, offX, offY);
             drawLightLine(light, light.getRadius(), light.getRadius(), i, light.getRadius() * 2, offX, offY);
@@ -293,5 +309,21 @@ public class Renderer
     public void setzDepth(int zDepth)
     {
         this.zDepth = zDepth;
+    }
+
+    public int getCamX() {
+        return camX;
+    }
+
+    public void setCamX(int camX) {
+        this.camX = camX;
+    }
+
+    public int getCamY() {
+        return camY;
+    }
+
+    public void setCamY(int camY) {
+        this.camY = camY;
     }
 }

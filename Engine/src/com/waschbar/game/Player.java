@@ -13,7 +13,7 @@ public class Player extends GameObject
     private float offX, offY;
 
     private float speed = 100;          // X speed
-    private float fallSpeed = 350;       // g
+    private float fallSpeed = 350;       // Down Speed
     private float jump = (float) -250.0; // Up Speed
     private float fallDistance = 0; // Y speed
     private boolean ground = false;
@@ -27,8 +27,8 @@ public class Player extends GameObject
         this.offY = 0;
         this.posX = posX * TS;
         this.posY = posY * TS;
-        this.width = TS - 1;
-        this.height = TS - 1;
+        this.width = TS;
+        this.height = TS;
     }
 
     public void update(GameContainer gc, GameManager gm, float dt)
@@ -118,6 +118,20 @@ public class Player extends GameObject
         }
         posX = tileX * TS + offX;
         posY = tileY * TS + offY;
+
+        //Shooting
+        if (gc.getInput().isKey(KeyEvent.VK_UP)) {
+            gm.addObject(new Bullet(tileX, tileY, offX + width / 2, offY + height / 2, 0));
+        }
+        if (gc.getInput().isKey(KeyEvent.VK_RIGHT)) {
+            gm.addObject(new Bullet(tileX, tileY, offX + width / 2, offY + height / 2,1));
+        }
+        if (gc.getInput().isKey(KeyEvent.VK_DOWN)) {
+            gm.addObject(new Bullet(tileX, tileY, offX + width / 2, offY + height / 2,2));
+        }
+        if (gc.getInput().isKey(KeyEvent.VK_LEFT)) {
+            gm.addObject(new Bullet(tileX, tileY, offX + width / 2, offY + height / 2,3));
+        }
     }
 
     public void render(GameContainer gc, Renderer r)
