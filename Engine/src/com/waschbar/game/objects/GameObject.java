@@ -2,6 +2,9 @@ package com.waschbar.game;
 
 import com.waschbar.engine.GameContainer;
 import com.waschbar.engine.Renderer;
+import com.waschbar.game.components.Component;
+
+import java.util.ArrayList;
 
 public abstract class GameObject
 {
@@ -10,8 +13,42 @@ public abstract class GameObject
     protected int width, height;
     protected boolean dead = false;
 
+    protected ArrayList<Component> components = new ArrayList<Component>();
+
     public abstract void update(GameContainer gc, GameManager gm, float dt);
     public abstract void render(GameContainer gc, Renderer r);
+
+    public void updateComponents(GameContainer gc, GameManager gm, GameObject parent, float dt)
+    {
+        for(Component c : components)
+            c.update(gc, gm, parent, dt);
+    }
+
+    public void renderComponents(GameContainer gc, GameManager gm, GameObject parent, Renderer r)
+    {
+        for(Component c : components)
+            c.render(gc, gm, parent, r);
+    }
+
+    public void addComponent(Component c)
+    {
+        components.add(c);
+    }
+
+    public void removeComponent(String tag)
+    {
+        for(Component c : components)
+            if(c.getTag().equalsIgnoreCase(tag))
+                components.remove(c);
+    }
+
+    public Component findComponent(String tag)
+    {
+        for(Component c : components)
+            if(c.getTag().equalsIgnoreCase(tag))
+                return c;
+        return null;
+    }
 
     public boolean isDead() {
         return dead;

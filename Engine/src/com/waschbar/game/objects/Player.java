@@ -11,6 +11,7 @@ import static com.waschbar.game.GameManager.TS;
 public class Player extends GameObject
 {
     private ImageTile playerImage = new ImageTile("/player.png", 16, 16);
+    private int padding, paddingTop;
     private int tileX, tileY;
     private float offX, offY;
     private int direction = 0;
@@ -34,6 +35,8 @@ public class Player extends GameObject
         this.posY = posY * TS;
         this.width = TS;
         this.height = TS;
+        padding = 5;
+        paddingTop = 2;
     }
 
     public void update(GameContainer gc, GameManager gm, float dt)
@@ -42,14 +45,9 @@ public class Player extends GameObject
         if (gc.getInput().isKey(KeyEvent.VK_D)) {
             if (gm.getCollision(tileX + 1, tileY) || gm.getCollision(tileX + 1,
                     tileY + (int)Math.signum((int)offY))) {
-                if (offX < 0) {
-                    offX += dt * speed;
-                    if (offX > 0) {
-                        offX = 0;
-                    }
-                }
-                else {
-                    offX = 0;
+                offX += dt * speed;
+                if (offX > padding) {
+                    offX = padding;
                 }
             }
             else {
@@ -60,14 +58,9 @@ public class Player extends GameObject
         if (gc.getInput().isKey(KeyEvent.VK_A)) {
             if (gm.getCollision(tileX - 1, tileY) || gm.getCollision(tileX - 1,
                     tileY + (int)Math.signum((int)offY))) {
-                if (offX > 0) {
-                    offX -= dt * speed;
-                    if (offX < 0) {
-                        offX = 0;
-                    }
-                }
-                else {
-                    offX = 0;
+                offX -= dt * speed;
+                if (offX < -padding) {
+                    offX = -padding;
                 }
             }
             else {
@@ -88,15 +81,15 @@ public class Player extends GameObject
 
         if (fallDistance < 0) {
             if ((gm.getCollision(tileX, tileY - 1) || gm.getCollision(tileX +
-                    (int) Math.signum((int) offX), tileY - 1)) && offY < 0) {
+                    (int) Math.signum((int) Math.abs(offX) > padding ? offX : 0), tileY - 1)) && offY < 0) {
                 fallDistance = 0;
-                offY = 0;
+                offY = -paddingTop;
             }
         }
 
         if (fallDistance > 0) {
             if ((gm.getCollision(tileX, tileY + 1) || gm.getCollision(tileX +
-                    (int) Math.signum((int) offX), tileY + 1)) && offY > 0) {
+                    (int) Math.signum((int) Math.abs(offX) > padding ? offX : 0), tileY + 1)) && offY > 0) {
                 fallDistance = 0;
                 offY = 0;
                 ground = true;
