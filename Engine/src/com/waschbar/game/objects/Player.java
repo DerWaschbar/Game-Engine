@@ -1,8 +1,10 @@
-package com.waschbar.game;
+package com.waschbar.game.objects;
 
 import com.waschbar.engine.GameContainer;
 import com.waschbar.engine.Renderer;
 import com.waschbar.engine.gfx.ImageTile;
+import com.waschbar.game.GameManager;
+import com.waschbar.game.components.AABBComponent;
 
 import java.awt.event.KeyEvent;
 
@@ -11,7 +13,6 @@ import static com.waschbar.game.GameManager.TS;
 public class Player extends GameObject
 {
     private ImageTile playerImage = new ImageTile("/player.png", 16, 16);
-    private int padding, paddingTop;
     private int tileX, tileY;
     private float offX, offY;
     private int direction = 0;
@@ -37,6 +38,8 @@ public class Player extends GameObject
         this.height = TS;
         padding = 5;
         paddingTop = 2;
+
+        this.addComponent(new AABBComponent(this));
     }
 
     public void update(GameContainer gc, GameManager gm, float dt)
@@ -157,11 +160,18 @@ public class Player extends GameObject
 
         groundLast = ground;
 
+        this.updateComponents(gc, gm, dt);
     }
 
     public void render(GameContainer gc, Renderer r)
     {
         r.drawImageTile(playerImage, (int)posX, (int)posY, (int)animation, direction);
+        this.renderComponents(gc, r);
+    }
+
+    @Override
+    public void collision(GameObject other) {
+
     }
 
 }

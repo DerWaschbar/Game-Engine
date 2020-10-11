@@ -2,6 +2,7 @@ package com.waschbar.game;
 
 import com.waschbar.engine.GameContainer;
 import com.waschbar.engine.Renderer;
+import com.waschbar.game.objects.GameObject;
 
 import static com.waschbar.game.GameManager.TS;
 

@@ -1,7 +1,8 @@
-package com.waschbar.game;
+package com.waschbar.game.objects;
 
 import com.waschbar.engine.GameContainer;
 import com.waschbar.engine.Renderer;
+import com.waschbar.game.GameManager;
 import com.waschbar.game.components.Component;
 
 import java.util.ArrayList;
@@ -11,23 +12,25 @@ public abstract class GameObject
     protected String tag;
     protected float posX, posY;
     protected int width, height;
+    protected int padding, paddingTop;
     protected boolean dead = false;
 
     protected ArrayList<Component> components = new ArrayList<Component>();
 
     public abstract void update(GameContainer gc, GameManager gm, float dt);
     public abstract void render(GameContainer gc, Renderer r);
+    public abstract void collision(GameObject other);
 
-    public void updateComponents(GameContainer gc, GameManager gm, GameObject parent, float dt)
+    public void updateComponents(GameContainer gc, GameManager gm, float dt)
     {
         for(Component c : components)
-            c.update(gc, gm, parent, dt);
+            c.update(gc, gm, dt);
     }
 
-    public void renderComponents(GameContainer gc, GameManager gm, GameObject parent, Renderer r)
+    public void renderComponents(GameContainer gc, Renderer r)
     {
         for(Component c : components)
-            c.render(gc, gm, parent, r);
+            c.render(gc, r);
     }
 
     public void addComponent(Component c)
@@ -98,4 +101,19 @@ public abstract class GameObject
         this.height = height;
     }
 
+    public int getPadding() {
+        return padding;
+    }
+
+    public void setPadding(int padding) {
+        this.padding = padding;
+    }
+
+    public int getPaddingTop() {
+        return paddingTop;
+    }
+
+    public void setPaddingTop(int paddingTop) {
+        this.paddingTop = paddingTop;
+    }
 }

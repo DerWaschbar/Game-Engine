@@ -1,7 +1,9 @@
-package com.waschbar.game;
+package com.waschbar.game.objects;
 
 import com.waschbar.engine.GameContainer;
 import com.waschbar.engine.Renderer;
+import com.waschbar.game.GameManager;
+import com.waschbar.game.objects.GameObject;
 
 import static com.waschbar.game.GameManager.TS;
 
@@ -20,6 +22,8 @@ public class Bullet extends GameObject {
         this.offY = offY;
         this.width = 4;
         this.height = 4;
+        this.padding = 0;
+        this.paddingTop = 0;
         posX = tileX * TS + offX;
         posY = tileY * TS + offY;
     }
@@ -68,6 +72,11 @@ public class Bullet extends GameObject {
 
     @Override
     public void render(GameContainer gc, Renderer r) {
-        r.drawFillRect((int)posX - width / 2, (int)posY - height / 2, width, height, 0xffff0000);
+        r.drawFillRect((int)posX,  (int)posY, width, height, 0xffff0000);
+    }
+
+    @Override
+    public void collision(GameObject other) {
+
     }
 }

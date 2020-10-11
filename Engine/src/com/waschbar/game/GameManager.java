@@ -4,6 +4,9 @@ import com.waschbar.engine.AbstractGame;
 import com.waschbar.engine.GameContainer;
 import com.waschbar.engine.Renderer;
 import com.waschbar.engine.gfx.Image;
+import com.waschbar.game.objects.GameObject;
+import com.waschbar.game.objects.Platform;
+import com.waschbar.game.objects.Player;
 
 import java.util.ArrayList;
 
@@ -22,6 +25,7 @@ public class GameManager extends AbstractGame
     public GameManager()
     {
         objects.add(new Player(6,4));
+        objects.add(new Platform());
         loadLevel("/level.png");
         camera = new Camera("player");
     }
@@ -43,6 +47,7 @@ public class GameManager extends AbstractGame
                 i--;
             }
         }
+        Physics.update();
         camera.update(gc, this, dt);
     }
 
