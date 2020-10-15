@@ -8,13 +8,13 @@ import com.waschbar.game.components.AABBComponent;
 public class Platform extends GameObject {
 
     private int color = (int) (Math.random() * Integer.MAX_VALUE);
-    public Platform()
+    public Platform(int x, int y)
     {
-        this.tag = "platfrom";
-        this.width = 32;
+        this.tag = "platform";
+        this.width = 64;
         this.height = 16;
-        this.posX = 176;
-        this.posY = 160;
+        this.posX = x;
+        this.posY = y;
 
         this.addComponent(new AABBComponent(this));
     }

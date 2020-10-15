@@ -1,29 +1,29 @@
 package com.waschbar.game.objects;
 
+import java.awt.event.KeyEvent;
+
 import com.waschbar.engine.GameContainer;
 import com.waschbar.engine.Renderer;
 import com.waschbar.engine.gfx.ImageTile;
 import com.waschbar.game.GameManager;
 import com.waschbar.game.components.AABBComponent;
 
-import java.awt.event.KeyEvent;
-
-import static com.waschbar.game.GameManager.TS;
-
 public class Player extends GameObject
 {
     private ImageTile playerImage = new ImageTile("/player.png", 16, 16);
+
+    private int direction = 0;
+    private float anim = 0;
     private int tileX, tileY;
     private float offX, offY;
-    private int direction = 0;
-    private float animation = 0;
 
-    private float speed = 100;          // X speed
-    private float fallSpeed = 350;       // Down Speed
-    private float jump = (float) -250.0; // Up Speed
-    private float fallDistance = 0; // Y speed
+    private float speed = 100;
+    private float fallSpeed = 1;
+    private float jump = -1;
     private boolean ground = false;
     private boolean groundLast = false;
+
+    private float fallDistance = 0;
 
     public Player(int posX, int posY)
     {
@@ -32,146 +32,236 @@ public class Player extends GameObject
         this.tileY = posY;
         this.offX = 0;
         this.offY = 0;
-        this.posX = posX * TS;
-        this.posY = posY * TS;
-        this.width = TS;
-        this.height = TS;
+        this.posX = posX * GameManager.TS;
+        this.posY = posY * GameManager.TS;
+        this.width = GameManager.TS;
+        this.height = GameManager.TS;
         padding = 5;
         paddingTop = 2;
 
         this.addComponent(new AABBComponent(this));
     }
 
+    @Override
     public void update(GameContainer gc, GameManager gm, float dt)
     {
-        //Left and right
-        if (gc.getInput().isKey(KeyEvent.VK_D)) {
-            if (gm.getCollision(tileX + 1, tileY) || gm.getCollision(tileX + 1,
-                    tileY + (int)Math.signum((int)offY))) {
+        // Left and Right
+        if (gc.getInput().isKey(KeyEvent.VK_D))
+        {
+            if (gm.getCollision(tileX + 1, tileY) || gm.getCollision(tileX + 1, tileY + (int) Math.signum((int) offY)))
+            {
                 offX += dt * speed;
-                if (offX > padding) {
+
+                if (offX > padding)
+                {
                     offX = padding;
                 }
-            }
-            else {
+            } else
+            {
                 offX += dt * speed;
             }
         }
 
-        if (gc.getInput().isKey(KeyEvent.VK_A)) {
-            if (gm.getCollision(tileX - 1, tileY) || gm.getCollision(tileX - 1,
-                    tileY + (int)Math.signum((int)offY))) {
+        if (gc.getInput().isKey(KeyEvent.VK_A))
+        {
+            if (gm.getCollision(tileX - 1, tileY) || gm.getCollision(tileX - 1, tileY + (int) Math.signum((int) offY)))
+            {
                 offX -= dt * speed;
-                if (offX < -padding) {
+
+                if (offX < -padding)
+                {
                     offX = -padding;
                 }
-            }
-            else {
+            } else
+            {
                 offX -= dt * speed;
             }
         }
-        //End of left and right
+        // End of Left and Right
 
-        //Jump and gravity
-        fallDistance +=  dt * fallSpeed;
-        if (gc.getInput().isKeyDown(KeyEvent.VK_W) && ground) {
-            fallDistance = jump;
-            ground = false;
-        }
+        // Beginning of Jump and Gravity
+        fallDistance += dt * fallSpeed;
 
-        //System.out.println(offY + " v: " + fallDistance + " a: " + dt * fallSpeed);
-        offY += dt * fallDistance;
-
-        if (fallDistance < 0) {
-            if ((gm.getCollision(tileX, tileY - 1) || gm.getCollision(tileX +
-                    (int) Math.signum((int) Math.abs(offX) > padding ? offX : 0), tileY - 1)) && offY < 0) {
+        if (fallDistance < 0)
+        {
+            if ((gm.getCollision(tileX, tileY - 1)
+                    || gm.getCollision(tileX + (int) Math.signum((int) Math.abs(offX) > padding ? offX : 0), tileY - 1))
+                    && offY < -paddingTop)
+            {
                 fallDistance = 0;
                 offY = -paddingTop;
             }
         }
 
-        if (fallDistance > 0) {
-            if ((gm.getCollision(tileX, tileY + 1) || gm.getCollision(tileX +
-                    (int) Math.signum((int) Math.abs(offX) > padding ? offX : 0), tileY + 1)) && offY > 0) {
+        if (fallDistance > 0)
+        {
+            if ((gm.getCollision(tileX, tileY + 1)
+                    || gm.getCollision(tileX + (int) Math.signum((int) Math.abs(offX) > padding ? offX : 0), tileY + 1))
+                    && offY > 0)
+            {
                 fallDistance = 0;
                 offY = 0;
                 ground = true;
             }
         }
-        //End of jump and gravity
 
-        //Final position
-        if (offY > TS / 2.0) {
+        if (gc.getInput().isKeyDown(KeyEvent.VK_W) && ground)
+        {
+            fallDistance = jump;
+            ground = false;
+        }
+
+        offY += fallDistance;
+        // End of jump and gravity
+
+        // Final position
+        if (offY > GameManager.TS / 2)
+        {
             tileY++;
-            offY -= TS;
+            offY -= GameManager.TS;
         }
-        if (offY < -TS / 2.0) {
-            tileY--;
-            offY += TS;
-        }
-        if (offX > TS / 2.0) {
-            tileX++;
-            offX -= TS;
-        }
-        if (offX < -TS / 2.0) {
-            tileX--;
-            offX += TS;
-        }
-        posX = tileX * TS + offX;
-        posY = tileY * TS + offY;
 
-        //Shooting
-        if (gc.getInput().isKey(KeyEvent.VK_UP)) {
+        if (offY < -GameManager.TS / 2)
+        {
+            tileY--;
+            offY += GameManager.TS;
+        }
+
+        if (offX > GameManager.TS / 2)
+        {
+            tileX++;
+            offX -= GameManager.TS;
+        }
+
+        if (offX < -GameManager.TS / 2)
+        {
+            tileX--;
+            offX += GameManager.TS;
+        }
+
+        posX = tileX * GameManager.TS + offX;
+        posY = tileY * GameManager.TS + offY;
+        // Final position end
+
+        // Shooting
+        if (gc.getInput().isKey(KeyEvent.VK_UP))
+        {
             gm.addObject(new Bullet(tileX, tileY, offX + width / 2, offY + height / 2, 0));
         }
-        if (gc.getInput().isKey(KeyEvent.VK_RIGHT)) {
-            gm.addObject(new Bullet(tileX, tileY, offX + width / 2, offY + height / 2,1));
-        }
-        if (gc.getInput().isKey(KeyEvent.VK_DOWN)) {
-            gm.addObject(new Bullet(tileX, tileY, offX + width / 2, offY + height / 2,2));
-        }
-        if (gc.getInput().isKey(KeyEvent.VK_LEFT)) {
-            gm.addObject(new Bullet(tileX, tileY, offX + width / 2, offY + height / 2,3));
+
+        if (gc.getInput().isKey(KeyEvent.VK_RIGHT))
+        {
+            gm.addObject(new Bullet(tileX, tileY, offX + width / 2, offY + height / 2, 1));
         }
 
-        if (gc.getInput().isKey(KeyEvent.VK_D)) {
+        if (gc.getInput().isKey(KeyEvent.VK_DOWN))
+        {
+            gm.addObject(new Bullet(tileX, tileY, offX + width / 2, offY + height / 2, 2));
+        }
+
+        if (gc.getInput().isKey(KeyEvent.VK_LEFT))
+        {
+            gm.addObject(new Bullet(tileX, tileY, offX + width / 2, offY + height / 2, 3));
+        }
+
+        // Animation start
+        if (gc.getInput().isKey(KeyEvent.VK_D))
+        {
             direction = 0;
-            animation += dt * 8;
-            if (animation >= 4)
-                animation = 0;
-        }
-        else if (gc.getInput().isKey(KeyEvent.VK_A)) {
+
+            anim += dt * 8;
+            if (anim >= 4)
+                anim = 0;
+        } else if (gc.getInput().isKey(KeyEvent.VK_A))
+        {
             direction = 1;
-            animation += dt * 8;
-            if (animation >= 4)
-                animation = 0;
-        }
-        else {
-            animation = 0;
+
+            anim += dt * 8;
+            if (anim >= 4)
+                anim = 0;
+        } else
+        {
+            anim = 0;
         }
 
-        if (!ground) {
-            animation = 1;
+        if ((int) fallDistance != 0)
+        {
+            anim = 1;
+            ground = false;
         }
 
-        if (!groundLast && ground) {
-            animation = 2;
+        if (ground && !groundLast)
+        {
+            anim = 2;
         }
+
+        // Animation end
 
         groundLast = ground;
 
         this.updateComponents(gc, gm, dt);
     }
 
+    @Override
     public void render(GameContainer gc, Renderer r)
     {
-        r.drawImageTile(playerImage, (int)posX, (int)posY, (int)animation, direction);
+        r.drawImageTile(playerImage, (int) posX, (int) posY, (int) anim, direction);
         this.renderComponents(gc, r);
     }
 
     @Override
-    public void collision(GameObject other) {
+    public void collision(GameObject other)
+    {
+        if (other.getTag().equalsIgnoreCase("platform"))
+        {
+            AABBComponent myC = (AABBComponent) this.findComponent("aabb");
+            AABBComponent otherC = (AABBComponent) other.findComponent("aabb");
 
+            //Note this code is also from episode 10 in the series as well.
+
+            if (Math.abs(myC.getLastCenterX() - otherC.getLastCenterX()) < myC.getHalfWidth() + otherC.getHalfWidth())
+            {
+                if (myC.getCenterY() < otherC.getCenterY())
+                {
+                    int distance = (myC.getHalfHeight() + otherC.getHalfHeight()) - (otherC.getCenterY() - myC.getCenterY());
+                    offY -= distance;
+                    posY -= distance;
+                    myC.setCenterY(myC.getCenterY() - distance);
+                    fallDistance = 0;
+                    ground = true;
+
+                }
+
+                if (myC.getCenterY() > otherC.getCenterY())
+                {
+                    int distance = (myC.getHalfHeight() + otherC.getHalfHeight()) - (myC.getCenterY() - otherC.getCenterY());
+                    offY += distance;
+                    posY += distance;
+                    myC.setCenterY(myC.getCenterY() + distance);
+                    fallDistance = 0;
+                }
+            }
+            else
+            {
+                if (myC.getCenterX() < otherC.getCenterX())
+                {
+                    int distance = (myC.getHalfWidth() + otherC.getHalfWidth()) - (otherC.getCenterX() - myC.getCenterX());
+                    offX -= distance;
+                    posX -= distance;
+                    myC.setCenterX(myC.getCenterX() - distance);
+                }
+
+
+                if (myC.getCenterX() > otherC.getCenterX())
+                {
+                    int distance = (myC.getHalfWidth() + otherC.getHalfWidth()) - (myC.getCenterX() - otherC.getCenterX());
+                    offX += distance;
+                    posX += distance;
+                    myC.setCenterX(myC.getCenterX() + distance);
+                }
+
+            }
+        }
     }
 
 }
