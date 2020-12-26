@@ -1,6 +1,6 @@
-package com.waschbar.game;
+package com.framework.game;
 
-import com.waschbar.engine.components.AABBComponent;
+import com.framework.engine.components.AABBComponent;
 
 import java.util.ArrayList;
 

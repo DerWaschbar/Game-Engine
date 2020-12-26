@@ -1,4 +1,4 @@
-package com.waschbar.engine.audio;
+package com.framework.engine.audio;
 
 import javax.sound.sampled.*;
 import java.io.BufferedInputStream;

@@ -1,4 +1,4 @@
-package com.waschbar.engine;
+package com.framework.engine;
 
 import javax.swing.*;
 import java.awt.*;

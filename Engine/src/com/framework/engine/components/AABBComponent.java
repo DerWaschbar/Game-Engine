@@ -1,10 +1,10 @@
-package com.waschbar.engine.components;
+package com.framework.engine.components;
 
-import com.waschbar.engine.GameContainer;
-import com.waschbar.engine.Renderer;
-import com.waschbar.game.GameManager;
-import com.waschbar.game.Physics;
-import com.waschbar.game.objects.GameObject;
+import com.framework.engine.GameContainer;
+import com.framework.engine.Renderer;
+import com.framework.game.GameManager;
+import com.framework.game.Physics;
+import com.framework.game.objects.GameObject;
 
 public class AABBComponent extends Component
 {

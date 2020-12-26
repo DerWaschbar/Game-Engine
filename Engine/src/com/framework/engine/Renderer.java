@@ -1,8 +1,8 @@
-package com.waschbar.engine;
+package com.framework.engine;
 
-import com.waschbar.engine.gfx.*;
-import com.waschbar.engine.gfx.Font;
-import com.waschbar.engine.gfx.Image;
+import com.framework.engine.gfx.*;
+import com.framework.engine.gfx.Font;
+import com.framework.engine.gfx.Image;
 
 import java.awt.image.DataBufferInt;
 import java.util.ArrayList;

@@ -1,13 +1,13 @@
-package com.waschbar.game;
+package com.framework.game;
 
-import com.waschbar.engine.AbstractGame;
-import com.waschbar.engine.Camera;
-import com.waschbar.engine.GameContainer;
-import com.waschbar.engine.Renderer;
-import com.waschbar.engine.gfx.Image;
-import com.waschbar.game.objects.GameObject;
-import com.waschbar.game.objects.Platform;
-import com.waschbar.game.objects.Player;
+import com.framework.engine.AbstractGame;
+import com.framework.engine.Camera;
+import com.framework.engine.GameContainer;
+import com.framework.engine.Renderer;
+import com.framework.engine.gfx.Image;
+import com.framework.game.objects.GameObject;
+import com.framework.game.objects.Platform;
+import com.framework.game.objects.Player;
 
 import java.util.ArrayList;
 

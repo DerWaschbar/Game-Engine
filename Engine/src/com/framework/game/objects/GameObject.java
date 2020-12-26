@@ -1,9 +1,9 @@
-package com.waschbar.game.objects;
+package com.framework.game.objects;
 
-import com.waschbar.engine.GameContainer;
-import com.waschbar.engine.Renderer;
-import com.waschbar.game.GameManager;
-import com.waschbar.engine.components.Component;
+import com.framework.engine.GameContainer;
+import com.framework.engine.Renderer;
+import com.framework.game.GameManager;
+import com.framework.engine.components.Component;
 
 import java.util.ArrayList;
 

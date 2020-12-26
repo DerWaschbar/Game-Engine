@@ -1,11 +1,9 @@
-package com.waschbar.engine;
+package com.framework.engine;
 
-import com.waschbar.engine.GameContainer;
-import com.waschbar.engine.Renderer;
-import com.waschbar.game.GameManager;
-import com.waschbar.game.objects.GameObject;
+import com.framework.game.GameManager;
+import com.framework.game.objects.GameObject;
 
-import static com.waschbar.game.GameManager.TS;
+import static com.framework.game.GameManager.TS;
 
 public class Camera {
 

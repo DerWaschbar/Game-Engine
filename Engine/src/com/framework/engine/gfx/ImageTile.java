@@ -1,4 +1,4 @@
-package com.waschbar.engine.gfx;
+package com.framework.engine.gfx;
 
 public class ImageTile extends Image
 {

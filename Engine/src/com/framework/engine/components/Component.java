@@ -1,8 +1,8 @@
-package com.waschbar.engine.components;
+package com.framework.engine.components;
 
-import com.waschbar.engine.GameContainer;
-import com.waschbar.engine.Renderer;
-import com.waschbar.game.GameManager;
+import com.framework.engine.GameContainer;
+import com.framework.engine.Renderer;
+import com.framework.game.GameManager;
 
 public abstract class Component
 {

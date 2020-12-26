@@ -1,8 +1,6 @@
-package com.waschbar.engine;
+package com.framework.engine;
 
 import java.awt.*;
-import java.awt.event.KeyEvent;
-import java.awt.event.MouseEvent;
 
 public class GameContainer implements Runnable
 {

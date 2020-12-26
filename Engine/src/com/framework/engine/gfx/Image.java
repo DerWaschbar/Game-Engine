@@ -1,4 +1,4 @@
-package com.waschbar.engine.gfx;
+package com.framework.engine.gfx;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;

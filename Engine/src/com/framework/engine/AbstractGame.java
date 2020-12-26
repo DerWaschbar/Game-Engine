@@ -1,4 +1,4 @@
-package com.waschbar.engine;
+package com.framework.engine;
 
 public abstract class AbstractGame
 {
