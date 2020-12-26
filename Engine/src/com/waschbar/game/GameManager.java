@@ -1,6 +1,7 @@
 package com.waschbar.game;
 
 import com.waschbar.engine.AbstractGame;
+import com.waschbar.engine.Camera;
 import com.waschbar.engine.GameContainer;
 import com.waschbar.engine.Renderer;
 import com.waschbar.engine.gfx.Image;

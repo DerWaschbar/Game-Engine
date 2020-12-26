@@ -3,7 +3,7 @@ package com.waschbar.game.objects;
 import com.waschbar.engine.GameContainer;
 import com.waschbar.engine.Renderer;
 import com.waschbar.game.GameManager;
-import com.waschbar.game.components.AABBComponent;
+import com.waschbar.engine.components.AABBComponent;
 
 public class Platform extends GameObject {
 

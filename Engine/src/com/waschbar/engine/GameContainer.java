@@ -13,7 +13,7 @@ public class GameContainer implements Runnable
     private AbstractGame game;
 
     private boolean running = false;
-    private final double UPDATE_CAP = 1.0/1000.0;
+    private final double UPDATE_CAP = 1.0/60.0;
 
     private int width = 320, height = 240;
     private float scale = 3f;

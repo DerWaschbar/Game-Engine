@@ -6,7 +6,7 @@ import com.waschbar.engine.GameContainer;
 import com.waschbar.engine.Renderer;
 import com.waschbar.engine.gfx.ImageTile;
 import com.waschbar.game.GameManager;
-import com.waschbar.game.components.AABBComponent;
+import com.waschbar.engine.components.AABBComponent;
 
 public class Player extends GameObject
 {
@@ -18,8 +18,8 @@ public class Player extends GameObject
     private float offX, offY;
 
     private float speed = 100;
-    private float fallSpeed = 1;
-    private float jump = -1;
+    private float fallSpeed = 10;
+    private float jump = -5;
     private boolean ground = false;
     private boolean groundLast = false;
 

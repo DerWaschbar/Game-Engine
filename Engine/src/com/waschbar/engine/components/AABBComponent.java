@@ -1,4 +1,4 @@
-package com.waschbar.game.components;
+package com.waschbar.engine.components;
 
 import com.waschbar.engine.GameContainer;
 import com.waschbar.engine.Renderer;
