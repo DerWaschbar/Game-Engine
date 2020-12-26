@@ -1,3 +1,3 @@
-# Game-Engine
+# 2D Graphics Framework
 
-2D Pixel Game Engine
+Single threaded 2D graphics rendering framework.
